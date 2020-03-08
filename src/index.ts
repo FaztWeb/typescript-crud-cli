@@ -1,14 +1,7 @@
-import { TaskItem } from "./TaskItem";
-import { TaskCollection } from "./taskCollection";
+import { TaskCollection } from "./models/taskCollection";
 import inquirer from "inquirer";
-import {JsonTaskCollection} from './jsonTaskCollection'
-
-let tasks: TaskItem[] = [
-  new TaskItem(1, "Buy Flowers"),
-  new TaskItem(2, "Get Shoes"),
-  new TaskItem(3, "task three"),
-  new TaskItem(4, "task four", true)
-];
+import { JsonTaskCollection } from "./models/jsonTaskCollection";
+import { tasks } from "./exampleData";
 
 let collection: TaskCollection = new JsonTaskCollection("Fazt", tasks);
 let showCompleted = true;

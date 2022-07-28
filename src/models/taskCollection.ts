@@ -1,4 +1,4 @@
-import { TaskItem } from "./TaskItem";
+import { TaskItem } from "./TaskItem.js";
 
 type TaskCounts = {
   total: number,

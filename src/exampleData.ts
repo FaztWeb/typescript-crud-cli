@@ -1,4 +1,4 @@
-import { TaskItem } from "./models/TaskItem";
+import { TaskItem } from "./models/TaskItem.js";
 
 export let tasks: TaskItem[] = [
   new TaskItem(1, "Buy Flowers"),

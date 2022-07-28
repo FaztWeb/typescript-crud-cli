@@ -5,7 +5,7 @@ export class TaskItem {
     public complete: boolean = false
   ) {}
 
-  public printDetails(): void {
+  public printDetails() {
     console.log(
       `${this.id}\t${this.task} ${this.complete ? "\t(complete)" : ""}`
     );

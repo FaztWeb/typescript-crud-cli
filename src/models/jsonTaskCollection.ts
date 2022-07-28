@@ -1,7 +1,6 @@
-import { TaskItem } from "./TaskItem";
-import { TaskCollection } from "./taskCollection";
-import lowdb from "lowdb";
-import FileSync from "lowdb/adapters/FileSync";
+import { TaskItem } from "./TaskItem.js";
+import { TaskCollection } from "./taskCollection.js";
+import { JSONFile, Low } from "lowdb";
 
 type schemaType = {
   tasks: {
@@ -12,22 +11,26 @@ type schemaType = {
 };
 
 export class JsonTaskCollection extends TaskCollection {
-  private database: lowdb.LowdbSync<schemaType>;
+  private database: Low<schemaType>;
 
   constructor(public username: string, taskItems: TaskItem[] = []) {
     super(username, []);
-    this.database = lowdb(new FileSync("Tasks.json"));
-    if (this.database.has("tasks").value()) {
-      let dbItems = this.database.get("tasks").value();
-      dbItems.forEach(item =>
+    const adapter = new JSONFile<schemaType>("Tasks.json");
+    this.database = new Low(adapter);
+    this.database.read();
+
+    if (this.database.data) {
+      let dbItems = this.database.data.tasks;
+      dbItems.forEach((item) =>
         this.taskMap.set(
           item.id,
           new TaskItem(item.id, item.task, item.complete)
         )
       );
     } else {
-      this.database.set("tasks", taskItems).write();
-      taskItems.forEach(item => this.taskMap.set(item.id, item));
+      this.database.data = { tasks: taskItems };
+      this.database.write();
+      taskItems.forEach((item) => this.taskMap.set(item.id, item));
     }
   }
 
@@ -42,12 +45,13 @@ export class JsonTaskCollection extends TaskCollection {
     this.storeTasks();
   }
 
-  removeComplete():void {
+  removeComplete(): void {
     super.removeComplete();
     this.storeTasks();
   }
 
   private storeTasks() {
-    this.database.set("tasks", [...this.taskMap.values()]).write();
+    this.database.data = { tasks: [...this.taskMap.values()] };
+    this.database.write();
   }
 }

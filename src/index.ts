@@ -1,7 +1,8 @@
-import { TaskCollection } from "./models/taskCollection";
+import { TaskCollection } from "./models/taskCollection.js";
 import inquirer from "inquirer";
-import { JsonTaskCollection } from "./models/jsonTaskCollection";
-import { tasks } from "./exampleData";
+import { JsonTaskCollection } from "./models/jsonTaskCollection.js";
+import { tasks } from "./exampleData.js";
+import { Commands } from "./commands.js";
 
 let collection: TaskCollection = new JsonTaskCollection("Fazt", tasks);
 let showCompleted = true;
@@ -11,15 +12,7 @@ function displayTaskList(): void {
     `${collection.userName}'s Tasks ` +
       `(${collection.getTaskCounts().incomplete} tasks to do)`
   );
-  collection.getTaskItems(showCompleted).forEach(task => task.printDetails());
-}
-
-enum Commands {
-  Add = "Add New Task",
-  Complete = "Complete Task",
-  Toggle = "Show/Hide Completed",
-  Purge = "Remove Complete Tasks",
-  Quit = "Quit"
+  collection.getTaskItems(showCompleted).forEach((task) => task.printDetails());
 }
 
 async function promptAdd(): Promise<void> {
@@ -27,7 +20,7 @@ async function promptAdd(): Promise<void> {
   const answers = await inquirer.prompt({
     type: "input",
     name: "add",
-    message: "Enter task:"
+    message: "Enter task:",
   });
   if (answers["add"] !== "") {
     collection.addTask(answers["add"]);
@@ -41,19 +34,19 @@ async function promptComplete(): Promise<void> {
     type: "checkbox",
     name: "complete",
     message: "Mark Task Complete",
-    choices: collection.getTaskItems(showCompleted).map(item => ({
+    choices: collection.getTaskItems(showCompleted).map((item) => ({
       name: item.task,
       value: item.id,
-      checked: item.complete
-    }))
+      checked: item.complete,
+    })),
   });
   let completedTasks = answers["complete"] as number[];
   collection
     .getTaskItems(true)
-    .forEach(item =>
+    .forEach((item) =>
       collection.markComplete(
         item.id,
-        completedTasks.find(id => id === item.id) != undefined
+        completedTasks.find((id) => id === item.id) != undefined
       )
     );
   promptUser();
@@ -66,7 +59,7 @@ async function promptUser(): Promise<void> {
     type: "list",
     name: "command",
     message: "Choose option",
-    choices: Object.values(Commands)
+    choices: Object.values(Commands),
   });
   switch (answers["command"]) {
     case Commands.Toggle:
